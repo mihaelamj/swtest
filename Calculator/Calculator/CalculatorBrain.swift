@@ -8,6 +8,10 @@
 
 import Foundation
 
+func multiply(op1: Double, op2: Double) -> Double {
+    return op1 * op2
+}
+
 class CalculatorBrain
 {
     private var accumulator = 0.0
@@ -17,28 +21,50 @@ class CalculatorBrain
     }
     
     private var operations: Dictionary<String, Operation> = [
-        "π" : Operation.Constants(M_PI),
-        "e" : Operation.Constants(M_E),
-        "√" : Operation.UnaryOperation(sqrt),
-        "cos" : Operation.UnaryOperation(cos)
+        "π"     : Operation.Constants(M_PI),
+        "e"     : Operation.Constants(M_E),
+        "√"     : Operation.UnaryOperation(sqrt),
+        "cos"   : Operation.UnaryOperation(cos),
+        "×"     : Operation.BinaryOperation(multiply),
+        "="     : Operation.Equals
     ]
     
     enum Operation {
         case Constants(Double)
         case UnaryOperation((Double) -> Double)
-        case BinaryOperation
+        case BinaryOperation((Double, Double) -> Double)
         case Equals
     }
+    
+    struct PendingBinayOperationInfo {
+        var binaryFunction: (Double, Double) -> Double
+        var firstOperand: Double
+    }
+    
+    private var pending: PendingBinayOperationInfo?
     
     func performOperation(sybmol: String) {
         if let operation = operations[sybmol] {
             switch operation {
-            case .Constants(let value): accumulator = value
-            case .UnaryOperation(let function): accumulator = function(accumulator)
-            case .BinaryOperation: break
-            case .Equals: break
+            case .Constants(let value):
+                accumulator = value
+            case .UnaryOperation(let function):
+                accumulator = function(accumulator)
+            case .BinaryOperation(let function):
+                executePendingBinaryOperation()
+                pending = PendingBinayOperationInfo(binaryFunction: function, firstOperand: accumulator)
+            case .Equals:
+                executePendingBinaryOperation()
             }
         }
+    }
+    
+    private func executePendingBinaryOperation() {
+        if pending != nil {
+            accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
+            pending =  nil
+        }
+        
     }
     
     var result:Double {
