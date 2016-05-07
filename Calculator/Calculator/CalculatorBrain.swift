@@ -29,14 +29,14 @@ class CalculatorBrain
         "="     : Operation.Equals
     ]
     
-    enum Operation {
+    private enum Operation {
         case Constants(Double)
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double, Double) -> Double)
         case Equals
     }
     
-    struct PendingBinayOperationInfo {
+    private struct PendingBinayOperationInfo {
         var binaryFunction: (Double, Double) -> Double
         var firstOperand: Double
     }
@@ -64,7 +64,6 @@ class CalculatorBrain
             accumulator = pending!.binaryFunction(pending!.firstOperand, accumulator)
             pending =  nil
         }
-        
     }
     
     var result:Double {
