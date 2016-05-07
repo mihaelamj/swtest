@@ -16,11 +16,29 @@ class CalculatorBrain
         accumulator = operand
     }
     
+    private var operations: Dictionary<String, Operation> = [
+        "π" : Operation.Constants,
+        "e" : Operation.UnaryOperation,
+        "√" : Operation.UnaryOperation,
+        "cos" : Operation.UnaryOperation
+    ]
+    
+    enum Operation {
+        case Constants
+        case UnaryOperation
+        case BinaryOperation
+        case Equals
+    }
+    
     func performOperation(sybmol: String) {
-        switch  sybmol {
-        case "π": accumulator = M_PI
-        case "√": accumulator = sqrt(accumulator)
-        default: break
+        if let operation = operations[sybmol] {
+            switch operation {
+            case .Constants: break
+            case .UnaryOperation: break
+            case .BinaryOperation: break
+            case .Equals: break
+            }
+            
         }
     }
     
